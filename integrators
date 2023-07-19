@@ -1,0 +1,74 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+h = 0.001                       #timestep
+n=10/h                        #number of steps
+n=int(n)
+x = np.zeros(n+1)             #list of positions 
+p = np.zeros(n+1)             #list of momenta
+f = np.zeros(n+1)             #list of forces
+t = np.linspace(0,10,n)
+p[0] = 1e-3                   #initial momentum
+m = 1                         #mass
+k = 1                         #spring constant
+
+
+def verlet_method(n,h):
+    for i in range(n):
+        x[i+1] = x[i] + p[i]*h/m + 0.5*f[i]/m*h**2  # update position
+        f[i+1] = -k*x[i+1]                          # update force
+        p[i+1] = p[i] + 0.5*h* (f[i]+f[i+1])        # update momentum
+        
+        
+    plt.title("displacement x(t), verlet method")
+    plt.plot(x,label = "h = 10^-3")
+    plt.legend(loc="upper left")
+        
+    plt.title("momentum p(t), verlet method")
+    plt.plot(p,label = "h = 10^-3")
+    plt.legend(loc="upper left")
+        
+
+verlet_method(n,h)
+        
+E = np.zeros(n)
+K = np.zeros(n)
+P = np.zeros(n)
+def verlet_energy(n,h):
+    for i in range(n):
+        P[i] = 0.5*p[i]**2/m      # potential energy
+        K[i] = + 0.5*k*x[i]**2    # kinetic energy
+        E[i] = P[i] + K[i]        # total energy
+         
+    plt.title("phase space trajectory verlet method")
+    plt.plot(x,p)
+    plt.xlabel("Displacement x(t)")
+    plt.ylabel("Momentum p(t)")
+        
+    plt.title("Energy, verlet method")
+    plt.plot(t, E)
+    plt.ylim(0, 10e-7)
+    plt.show()
+    
+    plt.title("energy deviation, verlet method")
+    plt.plot(t,E, label = "h= 10^-3")
+    plt.legend(loc="upper left")
+    plt.show()
+
+    
+verlet_energy(n,h)
+
+
+def heuns_method(n,h):
+    for i in range(n):
+        x[i+1] = x[i] + (0.5*p[i] - k*x[i]*0.5*h)*h/m
+        p[i+1] = p[i] - k*(x[i]+ 0.5*p[i]*h/m)*h
+        E[i] = 0.5*p[i]**2/m + 0.5*k*x[i]**2
+        
+    plt.title("phase space trajectory, heuns method")
+    plt.plot(x,p)
+    plt.xlabel("displacement x(t)")
+    plt.ylabel("momentum p(t)")
+    
+heuns_method(n,h)
