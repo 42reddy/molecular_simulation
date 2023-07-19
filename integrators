@@ -14,7 +14,7 @@ m = 1                         #mass
 k = 1                         #spring constant
 
 
-def verlet_method(n,h):
+def verlet_method(n,h):        
     for i in range(n):
         x[i+1] = x[i] + p[i]*h/m + 0.5*f[i]/m*h**2  # update position
         f[i+1] = -k*x[i+1]                          # update force
@@ -30,45 +30,44 @@ def verlet_method(n,h):
     plt.legend(loc="upper left")
         
 
-verlet_method(n,h)
+
         
 E = np.zeros(n)
 K = np.zeros(n)
 P = np.zeros(n)
+
 def verlet_energy(n,h):
     for i in range(n):
         P[i] = 0.5*p[i]**2/m      # potential energy
         K[i] = + 0.5*k*x[i]**2    # kinetic energy
         E[i] = P[i] + K[i]        # total energy
          
-    plt.title("phase space trajectory verlet method")
+    plt.title("phase space trajectory verlet method")        # plot phase space (x,p) 
     plt.plot(x,p)
     plt.xlabel("Displacement x(t)")
     plt.ylabel("Momentum p(t)")
         
-    plt.title("Energy, verlet method")
+    plt.title("Energy, verlet method")                       # plot total energy wrt time
     plt.plot(t, E)
     plt.ylim(0, 10e-7)
     plt.show()
     
-    plt.title("energy deviation, verlet method")
+    plt.title("energy deviation, verlet method")             # plot energy deviation
     plt.plot(t,E, label = "h= 10^-3")
     plt.legend(loc="upper left")
     plt.show()
 
-    
-verlet_energy(n,h)
 
 
 def heuns_method(n,h):
     for i in range(n):
-        x[i+1] = x[i] + (0.5*p[i] - k*x[i]*0.5*h)*h/m
-        p[i+1] = p[i] - k*(x[i]+ 0.5*p[i]*h/m)*h
-        E[i] = 0.5*p[i]**2/m + 0.5*k*x[i]**2
+        x[i+1] = x[i] + (0.5*p[i] - k*x[i]*0.5*h)*h/m           # update position
+        p[i+1] = p[i] - k*(x[i]+ 0.5*p[i]*h/m)*h                # update momentum
+        E[i] = 0.5*p[i]**2/m + 0.5*k*x[i]**2                    # update energy
         
     plt.title("phase space trajectory, heuns method")
     plt.plot(x,p)
     plt.xlabel("displacement x(t)")
     plt.ylabel("momentum p(t)")
-    
-heuns_method(n,h)
+
+
