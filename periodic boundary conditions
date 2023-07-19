@@ -112,14 +112,16 @@ def integr(n,h,p):
             
         E[i+1] = potential[i+1] + kinetic[i+1]
 
-  fig = plt.figure(figsize=(12,6))
-  plt.plot(rg[:10000],label= 'Rg')
-  plt.plot(r[:10000],label = 'Re')
-  plt.legend(loc='upper left')
-  plt.show()
-
-  fig = plt.figure(figsize=(20,20))
-  fig = plt.plot(x[:9000,0:10])
-  plt.title(label="positins for N=11, T=[0,300]t",fontsize=20,color="green")
+ 
 
 integr(n,h,p)
+
+fig = plt.figure(figsize=(12,6))
+plt.plot(rg[:10000],label= 'Rg')
+plt.plot(r[:10000],label = 'Re')
+plt.legend(loc='upper left')
+plt.show()
+
+fig = plt.figure(figsize=(20,20))
+fig = plt.plot(x[:9000,0:10])
+plt.title(label="positins for N=11, T=[0,300]t",fontsize=20,color="green")
