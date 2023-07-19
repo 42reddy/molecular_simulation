@@ -1,0 +1,125 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import linregress
+
+n=11                    # number of particles
+m= np.ones(n)           # mass 
+M=np.sum(m)
+k=1
+l=1
+t= 100
+h= 0.001               # timestep
+
+N = int(t/h)
+x = np.zeros((N,n,3))      #positions
+p = np.zeros((N,n,3))      #momenta
+f = np.zeros((N,n,3))      #forces
+r = np.zeros(N)            # end-end distance
+E = np.zeros((N))          # energy
+potential = np.zeros((N))
+kinetic = np.zeros((N))
+rcm = np.zeros((N,3))      # center of mass
+rg = np.zeros((N,3))       # radius of gyration
+
+for i in range(n):
+    x[0,i,0] = (i+1)*l      #generate the initial positions 
+
+x[0,:,0] -= 0.5             #generate the initial positions
+
+
+for i in range(n-1):               # calculate the center of mass at time 0
+    rcm[0] += m[i]*x[0,i]
+rcm[0] =rcm[0]/M
+rcm
+
+p[0,5] = [-3/7,6/7,-2/7]          # initial momentum on the 6th particle
+
+
+
+def integr(n,h,p):
+    for i in range(N-1):
+        
+        for j in range(n):
+            if j==0:      # checks if its the first bead
+                
+                f[i,j] = k*np.linalg.norm((x[i,j+1]-x[i,j])) 
+                
+            
+            elif j==n-1:   # if its the last bead
+                
+                f[i,j] = - k*np.linalg.norm((x[i,j]-x[i,j-1]))
+            
+            else:
+                f[i,j] = k*np.linalg.norm((x[i,j+1]-x[i,j]) - k*(x[i,j]-x[i,j-1]))
+               
+            
+            x[i+1,j] = x[i,j] + p[i,j]*h + 0.5*f[i,j]*h**2  # updates positions of all beads
+            
+            
+            if x[i+1,j,0] > 11:        # periodic boundary conditions for x dimension
+                x[i+1,j,0] -= 11
+            elif x[i+1,j,0] < 0:
+                x[i+1,j,0] += 11
+                
+            if x[i+1,j,1] > 5.5:
+                x[i+1,j,1] -= 11
+            elif x[i+1,j,1] < -5.5:
+                x[i+1,j,1] += 11
+                
+            if x[i+1,j,2] > 5.5:
+                x[i+1,j,2] -= 11
+            elif x[i+1,j,2] < -5.5:
+                x[i+1,j,2] += 11
+        
+        
+        
+        
+        for j in range(n-1):
+            rcm[i+1] += m[j]*x[i+1,j]
+        rcm[i+1] = rcm[i+1]/M
+        
+        #for j in range(n-1):
+            
+            #rg[i+1] +=  m[j]*(x[i+1,j]-rcm[i+1])**2
+        #rg[i+1] = rg[i+1]/M
+            
+        for j in range(n):          #update forces
+            
+            if j==0:
+                
+                f[i+1,j] = k*np.linalg.norm((x[i+1,j+1]-x[i+1,j]))      
+            
+            elif j==n-1:
+                
+                f[i+1,j] = - k*np.linalg.norm((x[i+1,j]-x[i+1,j-1]))
+              
+            else:
+                f[i+1,j] = k*np.linalg.norm((x[i+1,j+1]-x[i+1,j]) - k*(x[i+1,j]-x[i+1,j-1]))
+        
+            
+            p[i+1,j] = p[i,j] + 0.5*(f[i,j]+f[i+1,j])*h  #updates momenta of all beads
+        
+        #r[i+1] = x[i+1,-1] - x[i+1,0] #end-end distance
+        
+        for j in range(n-1):
+            
+            potential[i+1] += 0.5*k*(np.linalg.norm(x[i+1,j+1]-x[i+1,j]))**2
+        
+        
+        for j in range(n):    
+            
+            kinetic[i+1] += 0.5*np.linalg.norm(p[i+1,j])**2
+            
+        E[i+1] = potential[i+1] + kinetic[i+1]
+
+  fig = plt.figure(figsize=(12,6))
+  plt.plot(rg[:10000],label= 'Rg')
+  plt.plot(r[:10000],label = 'Re')
+  plt.legend(loc='upper left')
+  plt.show()
+
+  fig = plt.figure(figsize=(20,20))
+  fig = plt.plot(x[:9000,0:10])
+  plt.title(label="positins for N=11, T=[0,300]t",fontsize=20,color="green")
+
+integr(n,h,p)
