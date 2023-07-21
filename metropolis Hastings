@@ -1,0 +1,71 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+from scipy.stats import norm
+
+N = 250
+zeta =10
+M = 3
+
+def g_dist(x,peak_value, peak_loc, std):
+    return peak_value * norm.pdf(x,peak_loc, std)
+
+x = np.linspace(0, N, N)
+
+g_dis = np.zeros((N,N))
+
+for i in range(N):
+    g_dis[i,:] = g_dist(x,1,i,1)
+
+num = int(1e6)
+
+kb = 1
+T = 1
+dh = 1
+beta =1
+mu = 1
+v =1
+lam = 1
+K= np.linspace(100,500,21)
+l=np.linspace(0,20,21)
+
+n= np.zeros(num+1)
+
+
+def metropolis_scheme(n,num,M):
+    
+    for i in range(num):
+        
+        a = np.random.uniform(0,1)
+        dh = 1
+
+        if a < 0.5 or n[i]==0:
+        
+            #prop = g_dis[n[i],n[i]+1]
+        
+            
+        
+            r = np.random.uniform(0,1)
+            
+            nn = int(n[i])
+        
+            if r < np.minimum(1, (zeta**dh)/(math.factorial(nn+dh)/math.factorial(nn))):
+            
+                n[i+1:] += dh
+                
+                #print(n[i+1:i+2])
+                
+        elif a >= 0.5 and n[i]>dh:
+            
+        
+            r = np.random.uniform(0,1)
+            
+            nn= int(n[i])
+        
+            if r < np.minimum(1, ((math.factorial(nn)/(math.factorial(nn-dh)))/(zeta**dh))):
+            
+                n[i+1:] -= dh
+        
+                #print(n[i+1:i+2])
+    
+    
